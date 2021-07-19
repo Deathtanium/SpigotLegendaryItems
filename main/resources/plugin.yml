@@ -1,0 +1,6 @@
+name: LegendaryItems
+version: ${project.version}
+main: serbanstein.legendaryitems.Main
+api-version: 1.16
+commands:
+  legendify:
