@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +21,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class EventListener implements Listener {
+
+    @EventHandler (priority = EventPriority.HIGHEST)
+    public void itemDespawnEvent(ItemDespawnEvent event){
+        if(event.getEntity().getItemStack().getItemMeta()
+                .getPersistentDataContainer().has(new NamespacedKey(Main.getPlugin(Main.class),"legendary-flag"),PersistentDataType.STRING)){
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void itemDroppedEvent(ItemSpawnEvent event){
