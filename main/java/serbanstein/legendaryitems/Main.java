@@ -28,7 +28,7 @@ public final class Main extends JavaPlugin {
     public static String worldName;
     public static List<BukkitTask> syncTasks = new ArrayList<>();
 
-    public static void getWorldName() {
+    public static void getWorldName() { //gets world name from server.properties
         Scanner propFile = null;
         try {
             propFile = new Scanner(new File("server.properties"));
@@ -42,10 +42,12 @@ public final class Main extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
-        Bukkit.getServer().getPluginManager().registerEvents(new EventListener(), this);
-
-        syncTasks.add(new BukkitRunnable(){
+    public void onEnable() {          //Everything contained here runs on server boot
+        Bukkit.getServer().getPluginManager().registerEvents(new EventListener(), this); //register event listener
+        
+        getWorldName();
+        
+        syncTasks.add(new BukkitRunnable(){     //repeating task which broadcasts the locations of dropped legendary items to everyone on the server
                           @Override
                           public void run() {
                               List<Entity> list1 = Bukkit.getWorld(worldName).getEntities();
@@ -74,7 +76,7 @@ public final class Main extends JavaPlugin {
                                   }
                               }
                               if(!itemList.isEmpty()){
-                                  Bukkit.broadcastMessage("The mages of spawn have sensed the following legendary artefacts:");
+                                  Bukkit.broadcastMessage("The Mages of Spawn have sensed the following legendary artefacts:");
                                   for(Item item : itemList){
                                       String dimension;
                                       if(item.getLocation().getWorld().getName().equalsIgnoreCase(worldName+"_nether")) dimension = "Nether";
@@ -90,13 +92,15 @@ public final class Main extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
+    public void onDisable() {       //everything here runs when the server stops *cleanly*
         for(BukkitTask task : syncTasks) task.cancel();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        //commands
         if(command.getName().equalsIgnoreCase("legendify") && sender.hasPermission("LegendaryItems.permission")){
+            //adds NBT data to the item via Spigot's PersistendDataContainer
             if(args.length!=0){
                 sender.sendMessage("/legendify");
                 sender.sendMessage("The held item will be made legendary");
